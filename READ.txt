@@ -1,0 +1,7 @@
+ทำการ re-check ทุกส่วนของ code
+    1. ต้องมีการ check error
+    2. ต้องมีการ check null
+
+การสร้างหน้าใหม่ควรใช้ design pattern ที่มี หากไม่มีให้สร้าง design pattern ใหม่
+ทำการแยก component ให้ชัดเจนว่า
+ทำโครงสร้าง folder ให้ถูกต้องตามหลักการของ react
