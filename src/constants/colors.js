@@ -1,20 +1,93 @@
-export const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-export const DAYS_TH = ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์', 'อาทิตย์'];
-export const DAYS_COLORS = ['#FFD54F', '#F06292', '#81C784', '#FF8A65', '#4FC3F7', '#BA68C8', '#E57373'];
+/**
+ * Schedule Grid Constants & Theme Color Palettes
+ * Aligned with Coinbase Design System
+ */
 
+export const DAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+export const DAYS_TH = ['จันทร์', 'อังคาร', 'พุธ', 'พฤหัสบดี', 'ศุกร์', 'เสาร์', 'อาทิตย์'];
+
+// Day accent indicators (clean, subdued tones)
+export const DAYS_COLORS = [
+  '#FFB300', // Mon (Yellow / Amber)
+  '#E91E63', // Tue (Pink)
+  '#2E7D32', // Wed (Green)
+  '#E65100', // Thu (Orange)
+  '#0288D1', // Fri (Sky Blue)
+  '#7B1FA2', // Sat (Purple)
+  '#D32F2F', // Sun (Red)
+];
+
+// Refined, high-contrast preset color styles for course cards
 export const PRESET_COLORS = [
-    { bg: '#FFEBEE', border: '#FFCDD2', text: '#C62828', name: 'Strawberry' },
-    { bg: '#F3E5F5', border: '#E1BEE7', text: '#6A1B9A', name: 'Lavender' },
-    { bg: '#E3F2FD', border: '#BBDEFB', text: '#1565C0', name: 'Blueberry' },
-    { bg: '#E0F2F1', border: '#B2DFDB', text: '#00695C', name: 'Mint' },
-    { bg: '#FFF3E0', border: '#FFE0B2', text: '#EF6C00', name: 'Orange' },
-    { bg: '#FFFDE7', border: '#FFF9C4', text: '#F9A825', name: 'Lemon' },
-    { bg: '#FBE9E7', border: '#FFCCBC', text: '#D84315', name: 'Peach' },
-    { bg: '#ECEFF1', border: '#CFD8DC', text: '#455A64', name: 'Earl Grey' },
+  {
+    name: 'Coinbase Blue',
+    bg: '#EEF4FF',
+    border: '#B9D5FF',
+    text: '#0043CC',
+    badgeBg: '#0052FF',
+    badgeText: '#FFFFFF',
+  },
+  {
+    name: 'Emerald Green',
+    bg: '#EAF8F1',
+    border: '#A7E8C7',
+    text: '#047847',
+    badgeBg: '#05B169',
+    badgeText: '#FFFFFF',
+  },
+  {
+    name: 'Amber Gold',
+    bg: '#FEF8EA',
+    border: '#FDE4A8',
+    text: '#B77900',
+    badgeBg: '#F4B000',
+    badgeText: '#0A0B0D',
+  },
+  {
+    name: 'Crimson Red',
+    bg: '#FDF1F2',
+    border: '#FAC0C4',
+    text: '#B41825',
+    badgeBg: '#CF202F',
+    badgeText: '#FFFFFF',
+  },
+  {
+    name: 'Royal Purple',
+    bg: '#F6F2FF',
+    border: '#D8C6FE',
+    text: '#6422D4',
+    badgeBg: '#7C3AED',
+    badgeText: '#FFFFFF',
+  },
+  {
+    name: 'Cyan Teal',
+    bg: '#EDFAFB',
+    border: '#B3ECEE',
+    text: '#0E737B',
+    badgeBg: '#0891B2',
+    badgeText: '#FFFFFF',
+  },
+  {
+    name: 'Slate Charcoal',
+    bg: '#F1F3F5',
+    border: '#CED4DA',
+    text: '#343A40',
+    badgeBg: '#495057',
+    badgeText: '#FFFFFF',
+  },
+  {
+    name: 'Coral Sunset',
+    bg: '#FFF2ED',
+    border: '#FFCDBC',
+    text: '#C03D12',
+    badgeBg: '#EA580C',
+    badgeText: '#FFFFFF',
+  },
 ];
 
 export const START_HOUR = 8;
 export const END_HOUR = 20;
-export const PIXELS_PER_HOUR = 140;
-export const HEADER_WIDTH = 90;
-export const ROW_HEIGHT = 110;
+export const PIXELS_PER_HOUR = 130;
+export const HEADER_WIDTH = 96;
+export const ROW_HEIGHT = 104;
