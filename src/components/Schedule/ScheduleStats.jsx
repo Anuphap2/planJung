@@ -5,7 +5,7 @@ import {
   TimerRounded as TimeIcon,
   CalendarTodayRounded as DayIcon,
   TimelineRounded as SpanIcon,
-  TouchAppRounded as DragIcon
+  ContentCopyRounded as CopyTipIcon
 } from '@mui/icons-material';
 import { COINBASE_COLORS, COINBASE_TYPOGRAPHY } from '../../constants/coinbaseTokens';
 
@@ -15,36 +15,32 @@ export default function ScheduleStats({ stats }) {
   const statItems = [
     {
       label: 'วิชาที่ลงทะเบียน',
-      value: `${stats.totalCourses} วิชา`,
-      sub: stats.totalCourses > 0 ? 'บันทึกพร้อมใช้งาน' : 'ยังไม่มีวิชา',
+      value: `${stats.totalCourses} คาบ`,
+      sub: stats.totalCourses > 0 ? 'พร้อมใช้งานในตาราง' : 'ยังไม่มีวิชา',
       icon: <CoursesIcon sx={{ fontSize: 20, color: COINBASE_COLORS.primary }} />,
-      color: COINBASE_COLORS.primary,
     },
     {
       label: 'ชั่วโมงเรียนต่อสัปดาห์',
       value: stats.totalHoursFormatted,
       sub: stats.totalMinutes > 0 ? `${stats.totalMinutes} นาทีโดยประมาณ` : '0 นาที',
       icon: <TimeIcon sx={{ fontSize: 20, color: COINBASE_COLORS.semanticUp }} />,
-      color: COINBASE_COLORS.semanticUp,
     },
     {
       label: 'วันที่มีเรียน',
       value: `${stats.activeDaysCount} วัน`,
       sub: 'จากทั้งหมด 7 วัน',
       icon: <DayIcon sx={{ fontSize: 20, color: '#7C3AED' }} />,
-      color: '#7C3AED',
     },
     {
       label: 'ช่วงเวลาเรียนประจำวัน',
       value: stats.earliestTime !== '-' ? `${stats.earliestTime} - ${stats.latestTime}` : 'ไม่มีเวลาเรียน',
       sub: stats.earliestTime !== '-' ? 'เริ่มเช้าสุด - เลิกช้าสุด' : 'ตารางว่าง',
       icon: <SpanIcon sx={{ fontSize: 20, color: COINBASE_COLORS.body }} />,
-      color: COINBASE_COLORS.body,
     },
   ];
 
   return (
-    <Box sx={{ mb: 3 }}>
+    <Box sx={{ mb: 2.5 }}>
       {/* Stats Cards Row */}
       <Grid container spacing={2}>
         {statItems.map((item, index) => (
@@ -104,7 +100,7 @@ export default function ScheduleStats({ stats }) {
         ))}
       </Grid>
 
-      {/* Tip Banner */}
+      {/* Helpful Smart Tip Banner */}
       <Box
         sx={{
           mt: 2,
@@ -118,9 +114,9 @@ export default function ScheduleStats({ stats }) {
           gap: 1.5,
         }}
       >
-        <DragIcon sx={{ fontSize: 18, color: COINBASE_COLORS.primary }} />
+        <CopyTipIcon sx={{ fontSize: 18, color: COINBASE_COLORS.primary, flexShrink: 0 }} />
         <Typography variant="caption" sx={{ color: COINBASE_COLORS.body, fontWeight: 500 }}>
-          <strong>เคล็ดลับ:</strong> สามารถคลิกลาก (Drag & Drop) บล็อกวิชาเพื่อย้ายวันหรือขยับเวลาเรียนได้ทันที และกดปุ่มดินสอบนการ์ดเพื่อแก้ไขรายละเอียด
+          <strong>เคล็ดลับลดขั้นตอน:</strong> กดปุ่มทำซ้ำ (📋) หรือกด "+ เพิ่มอีกวัน" ในคลังวิชา เพื่อสร้างคาบเรียนอีกวันได้ทันทีโดยไม่ต้องพิมพ์ข้อมูลใหม่ และลากวาง (Drag & Drop) เพื่อย้ายวันได้อิสระ
         </Typography>
       </Box>
     </Box>

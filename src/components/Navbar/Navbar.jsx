@@ -13,7 +13,8 @@ import {
   AddRounded as AddIcon,
   ShareRounded as ShareIcon,
   RestartAltRounded as ResetIcon,
-  ScheduleRounded as ClockIcon
+  ScheduleRounded as ClockIcon,
+  AutoAwesomeRounded as DemoIcon
 } from '@mui/icons-material';
 import { COINBASE_COLORS } from '../../constants/coinbaseTokens';
 
@@ -22,6 +23,7 @@ export default function Navbar({
   onOpenAdd,
   onOpenShare,
   onOpenReset,
+  onLoadSample,
 }) {
   return (
     <AppBar
@@ -30,7 +32,7 @@ export default function Navbar({
       elevation={0}
       sx={{
         height: 64,
-        bgcolor: 'rgba(255, 255, 255, 0.92)',
+        bgcolor: 'rgba(255, 255, 255, 0.94)',
         backdropFilter: 'blur(16px)',
         borderBottom: `1px solid ${COINBASE_COLORS.hairline}`,
         zIndex: 1100,
@@ -78,7 +80,7 @@ export default function Navbar({
                 PlanJung
               </Typography>
               <Chip
-                label="Coinbase Edition"
+                label="Pro Planner"
                 size="small"
                 sx={{
                   height: 20,
@@ -128,6 +130,25 @@ export default function Navbar({
 
         {/* Actions */}
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+          {onLoadSample && (
+            <Tooltip title="โหลดข้อมูลตัวอย่างตารางเรียนเพื่อทดลองใช้งาน">
+              <Button
+                variant="text"
+                size="small"
+                startIcon={<DemoIcon sx={{ fontSize: 17 }} />}
+                onClick={onLoadSample}
+                sx={{
+                  height: 40,
+                  fontSize: '0.82rem',
+                  color: COINBASE_COLORS.body,
+                  display: { xs: 'none', md: 'inline-flex' },
+                }}
+              >
+                ตัวอย่างตาราง
+              </Button>
+            </Tooltip>
+          )}
+
           <Button
             variant="outlined"
             startIcon={<ShareIcon sx={{ fontSize: 18 }} />}

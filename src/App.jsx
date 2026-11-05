@@ -14,17 +14,18 @@ import {
 import {
   AddRounded as AddIcon,
   ShareRounded as ShareIcon,
-  RestartAltRounded as ResetIcon
 } from '@mui/icons-material';
 
 import { theme } from './theme/theme';
 import { COINBASE_COLORS } from './constants/coinbaseTokens';
+import { DAYS } from './constants/colors';
 import { useSchedule } from './hooks/useSchedule';
 import { useScheduleDrag } from './hooks/useScheduleDrag';
 import { encodeScheduleForShare } from './utils/scheduleStorage';
 
 import Navbar from './components/Navbar/Navbar';
 import ScheduleStats from './components/Schedule/ScheduleStats';
+import CourseLibraryBar from './components/Schedule/CourseLibraryBar';
 import ScheduleGrid from './components/Schedule/ScheduleGrid';
 import CourseDialog from './components/Dialogs/CourseDialog';
 import ShareDialog from './components/Dialogs/ShareDialog';
@@ -43,12 +44,14 @@ export default function App() {
     updateCourse,
     deleteCourse,
     clearSchedule,
+    loadSampleSchedule,
     checkCourseConflict,
   } = useSchedule();
 
   // --- Dialog States ---
   const [openForm, setOpenForm] = useState(false);
   const [editingCourse, setEditingCourse] = useState(null);
+  const [duplicateInitialData, setDuplicateInitialData] = useState(null);
   const [openShare, setOpenShare] = useState(false);
   const [shareUrl, setShareUrl] = useState('');
   const [openConfirmReset, setOpenConfirmReset] = useState(false);
@@ -117,17 +120,40 @@ export default function App() {
   // --- Handlers ---
   const handleOpenAdd = () => {
     setEditingCourse(null);
+    setDuplicateInitialData(null);
     setOpenForm(true);
   };
 
   const handleOpenEdit = (course) => {
     if (!course) return;
     setEditingCourse(course);
+    setDuplicateInitialData(null);
     setOpenForm(true);
   };
 
-  const handleSaveCourse = (formData) => {
-    if (!formData) return;
+  const handleDuplicateCourse = (course) => {
+    if (!course) return;
+    // Suggest the next available or logical day
+    const currentDayIdx = DAYS.indexOf(course.day);
+    const nextDayIdx = (currentDayIdx + 2) % DAYS.length; // e.g., Mon -> Wed
+    const suggestedDay = DAYS[nextDayIdx] || 'Wednesday';
+
+    setEditingCourse(null);
+    setDuplicateInitialData({
+      code: course.code,
+      name: course.name,
+      room: course.room || '',
+      colorIndex: typeof course.colorIndex === 'number' ? course.colorIndex : 0,
+      day: suggestedDay,
+      startTime: course.startTime || '09:00',
+      endTime: course.endTime || '12:00',
+    });
+    setOpenForm(true);
+    showToast(`คัดลอกข้อมูลวิชา ${course.code} แล้ว เลือกวันและเวลาเพื่อบันทึก`, 'info');
+  };
+
+  const handleSaveCourse = (formData, { addAnother = false } = {}) => {
+    if (!formData) return false;
 
     if (editingCourse && editingCourse.id) {
       const result = updateCourse(editingCourse.id, formData);
@@ -140,9 +166,11 @@ export default function App() {
         } else {
           showToast(result.error || 'ไม่สามารถแก้ไขวิชาได้', 'error');
         }
-        return;
+        return false;
       }
       showToast(`แก้ไขข้อมูลวิชา ${formData.code} เรียบร้อย`, 'success');
+      setOpenForm(false);
+      return true;
     } else {
       const result = addCourse(formData);
       if (!result.success) {
@@ -154,17 +182,22 @@ export default function App() {
         } else {
           showToast(result.error || 'ไม่สามารถเพิ่มวิชาได้', 'error');
         }
-        return;
+        return false;
       }
-      showToast(`เพิ่มวิชา ${formData.code} ลงตารางเรียบร้อย`, 'success');
-    }
 
-    setOpenForm(false);
+      if (addAnother) {
+        showToast(`บันทึกวิชา ${formData.code} แล้ว สามารถเลือกวันและเวลาเพื่อเพิ่มคาบถัดไปได้ทันที`, 'success');
+      } else {
+        showToast(`เพิ่มวิชา ${formData.code} ลงตารางเรียบร้อย`, 'success');
+        setOpenForm(false);
+      }
+      return true;
+    }
   };
 
   const handleDeleteCourse = (course) => {
     if (!course || !course.id) return;
-    if (window.confirm(`ต้องการลบวิชา "${course.code} ${course.name}" หรือไม่?`)) {
+    if (window.confirm(`ต้องการลบวิชา "${course.code} ${course.name}" (${course.day} ${course.startTime}-${course.endTime}) หรือไม่?`)) {
       deleteCourse(course.id);
       showToast(`ลบวิชา ${course.code} เรียบร้อย`, 'info');
     }
@@ -189,6 +222,11 @@ export default function App() {
     showToast('ล้างตารางเรียนทั้งหมดเรียบร้อยแล้ว', 'info');
   };
 
+  const handleLoadSample = () => {
+    loadSampleSchedule();
+    showToast('โหลดตัวอย่างตารางเรียนสำเร็จ พร้อมใช้งานแล้ว', 'success');
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -206,17 +244,27 @@ export default function App() {
           onOpenAdd={handleOpenAdd}
           onOpenShare={handleOpenShare}
           onOpenReset={() => setOpenConfirmReset(true)}
+          onLoadSample={handleLoadSample}
         />
 
         {/* Main Content */}
-        <Container maxWidth="xl" sx={{ mt: { xs: 2.5, md: 4 } }}>
+        <Container maxWidth="xl" sx={{ mt: { xs: 2.5, md: 3.5 } }}>
           {/* Institutional Metric Tiles */}
           <ScheduleStats stats={stats} />
 
-          {/* Core Schedule Timetable */}
+          {/* Course Library Bar (Quick subject groups & duplicate session) */}
+          <CourseLibraryBar
+            courses={courses}
+            onOpenAdd={handleOpenAdd}
+            onDuplicate={handleDuplicateCourse}
+            onLoadSample={handleLoadSample}
+          />
+
+          {/* Core Schedule Timetable Grid */}
           <ScheduleGrid
             courses={courses}
             onEdit={handleOpenEdit}
+            onDuplicate={handleDuplicateCourse}
             onDelete={handleDeleteCourse}
             onDragStart={handleDragStart}
             dragState={dragState}
@@ -248,63 +296,61 @@ export default function App() {
                   '&:hover': { bgcolor: COINBASE_COLORS.surfaceSoft },
                 }}
               >
-                <ShareIcon fontSize="small" />
+                <ShareIcon sx={{ fontSize: 20 }} />
               </Fab>
             </Tooltip>
 
-            <Tooltip title="เพิ่มวิชา" placement="left">
+            <Tooltip title="เพิ่มวิชาเรียนใหม่" placement="left">
               <Fab
                 color="primary"
                 onClick={handleOpenAdd}
                 sx={{
-                  width: 56,
-                  height: 56,
-                  boxShadow: '0 8px 24px rgba(0, 82, 255, 0.35)',
+                  bgcolor: COINBASE_COLORS.primary,
+                  boxShadow: '0 6px 16px rgba(0, 82, 255, 0.35)',
+                  '&:hover': { bgcolor: COINBASE_COLORS.primaryActive },
                 }}
               >
-                <AddIcon />
+                <AddIcon sx={{ fontSize: 24 }} />
               </Fab>
             </Tooltip>
           </Box>
         )}
 
-        {/* Dialog: Add / Edit Course */}
+        {/* Dialogs */}
         <CourseDialog
-          key={openForm ? (editingCourse?.id || 'add') : 'closed'}
+          key={openForm ? `dialog_${editingCourse?.id || duplicateInitialData?.code || 'new'}` : 'closed'}
           open={openForm}
           handleClose={() => setOpenForm(false)}
           onSave={handleSaveCourse}
-          editingId={editingCourse ? editingCourse.id : null}
-          initialData={editingCourse}
+          editingId={editingCourse?.id || null}
+          initialData={editingCourse || duplicateInitialData || null}
           fullScreen={isMobile}
+          existingCourses={courses}
         />
 
-        {/* Dialog: Share Schedule */}
         <ShareDialog
           open={openShare}
           onClose={() => setOpenShare(false)}
           shareUrl={shareUrl}
         />
 
-        {/* Dialog: Conflict Warning */}
         <ConflictDialog
           open={conflictDialog.open}
           onClose={() => setConflictDialog({ open: false, message: '' })}
-          conflictInfo={conflictDialog.message}
+          message={conflictDialog.message}
         />
 
-        {/* Dialog: Reset Confirmation */}
         <ConfirmDialog
           open={openConfirmReset}
           onClose={() => setOpenConfirmReset(false)}
           onConfirm={handleConfirmReset}
-          title="ล้างตารางเรียนทั้งหมด?"
-          message="ข้อมูลวิชาทั้งหมดที่บันทึกไว้ในเบราว์เซอร์จะถูกลบออกถาวร คุณแน่ใจหรือไม่ที่จะล้างตาราง?"
-          confirmText="ล้างข้อมูลทั้งหมด"
+          title="ต้องการล้างตารางเรียนทั้งหมดหรือไม่?"
+          message="ข้อมูลวิชาเรียนทั้งหมดในตารางของคุณจะถูกลบออกจากเครื่องทันที และไม่สามารถย้อนกลับได้"
+          confirmText="ล้างตารางทั้งหมด"
           confirmColor="error"
         />
 
-        {/* Snackbar Toast */}
+        {/* Toast Notification */}
         <Snackbar
           open={toast.open}
           autoHideDuration={3500}
@@ -316,12 +362,10 @@ export default function App() {
             severity={toast.severity}
             variant="filled"
             sx={{
-              borderRadius: '100px',
-              px: 3,
-              py: 1,
-              fontWeight: 500,
+              borderRadius: '12px',
               boxShadow: '0 8px 24px rgba(0, 0, 0, 0.15)',
-              border: `1px solid rgba(255, 255, 255, 0.2)`,
+              fontWeight: 600,
+              fontSize: '0.88rem',
             }}
           >
             {toast.message}

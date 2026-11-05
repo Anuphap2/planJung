@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Paper, Box } from '@mui/material';
-import { AccessTimeRounded as TimeIcon } from '@mui/icons-material';
+import { Paper, Box, Tooltip } from '@mui/material';
+import { CalendarMonthRounded as CalendarIcon } from '@mui/icons-material';
 import { DAYS, START_HOUR, END_HOUR, PIXELS_PER_HOUR, HEADER_WIDTH } from '../../constants/colors';
 import { COINBASE_COLORS } from '../../constants/coinbaseTokens';
 import TimeHeader from './TimeHeader';
@@ -9,11 +9,13 @@ import DayRow from './DayRow';
 export default function ScheduleGrid({
   courses = [],
   onEdit,
+  onDuplicate,
   onDelete,
   onDragStart,
   dragState,
 }) {
-  const totalGridWidth = HEADER_WIDTH + (END_HOUR - START_HOUR + 1) * PIXELS_PER_HOUR;
+  // Buffer on the right so the final hour marker (20:00) is never clipped
+  const totalGridWidth = HEADER_WIDTH + (END_HOUR - START_HOUR) * PIXELS_PER_HOUR + 56;
 
   // Real-time Current Time Line Indicator
   const [currentMinutes, setCurrentMinutes] = useState(() => {
@@ -25,7 +27,7 @@ export default function ScheduleGrid({
     const timer = setInterval(() => {
       const now = new Date();
       setCurrentMinutes(now.getHours() * 60 + now.getMinutes());
-    }, 60000);
+    }, 30000); // 30s update interval
     return () => clearInterval(timer);
   }, []);
 
@@ -63,36 +65,39 @@ export default function ScheduleGrid({
         }}
       >
         <Box sx={{ minWidth: totalGridWidth, position: 'relative' }}>
-          {/* Header Row (Time Tracker) */}
+          {/* Header Row (Dual-Tier Time Tracker) */}
           <Box
             sx={{
-              height: 48,
+              height: 52,
               display: 'flex',
               borderBottom: `1px solid ${COINBASE_COLORS.hairline}`,
               position: 'sticky',
               top: 0,
               zIndex: 30,
               bgcolor: 'rgba(255, 255, 255, 0.98)',
-              backdropFilter: 'blur(8px)',
+              backdropFilter: 'blur(10px)',
             }}
           >
             {/* Top-Left Corner Box */}
-            <Box
-              sx={{
-                width: HEADER_WIDTH,
-                minWidth: HEADER_WIDTH,
-                borderRight: `1px solid ${COINBASE_COLORS.hairline}`,
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                bgcolor: COINBASE_COLORS.canvas,
-                position: 'sticky',
-                left: 0,
-                zIndex: 35,
-              }}
-            >
-              <TimeIcon sx={{ fontSize: 18, color: COINBASE_COLORS.muted }} />
-            </Box>
+            <Tooltip title="ตารางเรียนประจำสัปดาห์ (จันทร์ - อาทิตย์)" arrow placement="bottom">
+              <Box
+                sx={{
+                  width: HEADER_WIDTH,
+                  minWidth: HEADER_WIDTH,
+                  borderRight: `1px solid ${COINBASE_COLORS.hairline}`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  bgcolor: COINBASE_COLORS.canvas,
+                  position: 'sticky',
+                  left: 0,
+                  zIndex: 35,
+                  cursor: 'default',
+                }}
+              >
+                <CalendarIcon sx={{ fontSize: 20, color: COINBASE_COLORS.primary }} />
+              </Box>
+            </Tooltip>
 
             {/* Time Ticks */}
             <Box sx={{ flexGrow: 1, position: 'relative' }}>
@@ -108,6 +113,7 @@ export default function ScheduleGrid({
               dayIndex={idx}
               courses={courses}
               onEdit={onEdit}
+              onDuplicate={onDuplicate}
               onDelete={onDelete}
               onDragStart={onDragStart}
               dragState={dragState}
@@ -126,7 +132,7 @@ export default function ScheduleGrid({
                 bgcolor: COINBASE_COLORS.semanticDown,
                 zIndex: 25,
                 pointerEvents: 'none',
-                opacity: 0.65,
+                opacity: 0.8,
                 '&::after': {
                   content: '""',
                   position: 'absolute',
@@ -136,6 +142,7 @@ export default function ScheduleGrid({
                   height: 10,
                   borderRadius: '50%',
                   bgcolor: COINBASE_COLORS.semanticDown,
+                  boxShadow: '0 0 6px rgba(207, 32, 47, 0.5)',
                 },
               }}
             />

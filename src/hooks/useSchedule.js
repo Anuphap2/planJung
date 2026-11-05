@@ -2,7 +2,9 @@ import { useState, useEffect, useMemo, useCallback } from 'react';
 import {
   loadScheduleFromStorage,
   saveScheduleToStorage,
-  decodeScheduleFromShare
+  decodeScheduleFromShare,
+  upsertCourseLibrary,
+  SAMPLE_SCHEDULE
 } from '../utils/scheduleStorage';
 import { findConflictingCourse, validateCourseData } from '../utils/conflictUtils';
 import { getDurationMinutes, timeToMinutes } from '../utils/timeUtils';
@@ -78,6 +80,9 @@ export const useSchedule = () => {
       room: courseData.room || '',
     };
 
+    // Save to persistent course templates library
+    upsertCourseLibrary(newCourse);
+
     setCourses(prev => [...prev, newCourse]);
     return { success: true, course: newCourse };
   }, [courses]);
@@ -103,6 +108,9 @@ export const useSchedule = () => {
       return { success: false, conflict, error: `เวลาเรียนชนกับวิชา ${conflict.code} ${conflict.name}` };
     }
 
+    // Save to persistent course templates library
+    upsertCourseLibrary(updatedData);
+
     setCourses(prev => prev.map(c => (c.id === id ? { ...updatedData, id } : c)));
     return { success: true };
   }, [courses]);
@@ -124,6 +132,15 @@ export const useSchedule = () => {
   const clearSchedule = useCallback(() => {
     setCourses([]);
     saveScheduleToStorage([]);
+    return { success: true };
+  }, []);
+
+  /**
+   * Load sample demo schedule
+   */
+  const loadSampleSchedule = useCallback(() => {
+    setCourses(SAMPLE_SCHEDULE);
+    saveScheduleToStorage(SAMPLE_SCHEDULE);
     return { success: true };
   }, []);
 
@@ -198,6 +215,7 @@ export const useSchedule = () => {
     updateCourse,
     deleteCourse,
     clearSchedule,
+    loadSampleSchedule,
     setAllCourses,
     checkCourseConflict,
   };
