@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import { DAYS, START_HOUR, END_HOUR, PIXELS_PER_HOUR, ROW_HEIGHT } from '../constants/colors';
+import { DAYS, DAY_INDEX_MAP, START_HOUR, END_HOUR, PIXELS_PER_HOUR, ROW_HEIGHT } from '../constants/colors';
 import { timeToMinutes, minutesToTime, getDurationMinutes } from '../utils/timeUtils';
 
 /**
@@ -59,8 +59,8 @@ export const useScheduleDrag = ({ updateCourse, checkConflict, onAlert }) => {
     if (Math.abs(deltaX) > 4 || Math.abs(deltaY) > 4) {
       // Calculate row (Day) change
       const rowChange = Math.round(deltaY / ROW_HEIGHT);
-      const currentDayIdx = DAYS.indexOf(originalCourse.day);
-      let newDayIdx = currentDayIdx !== -1 ? currentDayIdx + rowChange : 0;
+      const currentDayIdx = DAY_INDEX_MAP[originalCourse.day] ?? 0;
+      let newDayIdx = currentDayIdx + rowChange;
       newDayIdx = Math.max(0, Math.min(DAYS.length - 1, newDayIdx));
 
       // Calculate time change (snap to 30 minutes)

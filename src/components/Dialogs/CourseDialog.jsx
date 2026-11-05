@@ -26,7 +26,7 @@ import {
   LibraryBooksRounded as LibraryIcon,
   TimerOutlined as TimerIcon
 } from '@mui/icons-material';
-import { PRESET_COLORS, DAYS, DAYS_TH, DAYS_COLORS } from '../../constants/colors';
+import { PRESET_COLORS, DAYS, DAYS_TH, DAYS_COLORS, DAY_INDEX_MAP } from '../../constants/colors';
 import { COINBASE_COLORS } from '../../constants/coinbaseTokens';
 import { timeToMinutes, getDurationMinutes } from '../../utils/timeUtils';
 import { loadCourseLibrary } from '../../utils/scheduleStorage';
@@ -153,7 +153,7 @@ export default function CourseDialog({
 
     if (success && addAnother) {
       // Advance day to next day in cycle, keeping subject details intact
-      const currentDayIdx = DAYS.indexOf(formData.day);
+      const currentDayIdx = DAY_INDEX_MAP[formData.day] ?? 0;
       const nextDayIdx = (currentDayIdx + 2) % DAYS.length; // e.g. Mon -> Wed
       setFormData(prev => ({
         ...prev,
@@ -405,10 +405,10 @@ export default function CourseDialog({
                 <TimerIcon sx={{ fontSize: 15, color: COINBASE_COLORS.semanticUp }} />
                 <Typography variant="caption" sx={{ fontWeight: 600, color: COINBASE_COLORS.body }}>
                   ระยะเวลาเรียน:{' '}
-                  <span style={{ color: COINBASE_COLORS.ink }}>
+                  <Box component="span" sx={{ color: COINBASE_COLORS.ink }}>
                     {durationHours > 0 ? `${durationHours} ชั่วโมง ` : ''}
                     {durationRemainderMin > 0 ? `${durationRemainderMin} นาที` : ''}
-                  </span>{' '}
+                  </Box>{' '}
                   (ตั้งแต่ {formData.startTime} ถึง {formData.endTime} น.)
                 </Typography>
               </Box>

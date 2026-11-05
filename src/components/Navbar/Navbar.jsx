@@ -57,10 +57,11 @@ export default function Navbar({
               overflow: 'hidden',
             }}
           >
-            <img
+            <Box
+              component="img"
               src="/icon.png"
               alt="PlanJung"
-              style={{ width: '100%', height: '100%', objectFit: 'contain' }}
+              sx={{ width: '100%', height: '100%', objectFit: 'contain' }}
             />
           </Box>
           <Box>

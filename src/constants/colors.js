@@ -9,6 +9,37 @@ export const DAYS_TH = ['จันทร์', 'อังคาร', 'พุธ',
 
 export const DAYS_SHORT_TH = ['จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.', 'อา.'];
 
+// O(1) Constant-time lookup maps for Day indexing & Thai labels
+export const DAY_INDEX_MAP = Object.freeze({
+  Monday: 0,
+  Tuesday: 1,
+  Wednesday: 2,
+  Thursday: 3,
+  Friday: 4,
+  Saturday: 5,
+  Sunday: 6,
+});
+
+export const DAY_SHORT_TH_MAP = Object.freeze({
+  Monday: 'จ.',
+  Tuesday: 'อ.',
+  Wednesday: 'พ.',
+  Thursday: 'พฤ.',
+  Friday: 'ศ.',
+  Saturday: 'ส.',
+  Sunday: 'อา.',
+});
+
+export const DAY_TH_MAP = Object.freeze({
+  Monday: 'จันทร์',
+  Tuesday: 'อังคาร',
+  Wednesday: 'พุธ',
+  Thursday: 'พฤหัสบดี',
+  Friday: 'ศุกร์',
+  Saturday: 'เสาร์',
+  Sunday: 'อาทิตย์',
+});
+
 // Standard Thai University Day Accent Colors
 export const DAYS_COLORS = [
   '#F59E0B', // Mon (Warm Amber Yellow)

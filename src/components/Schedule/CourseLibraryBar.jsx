@@ -9,7 +9,7 @@ import {
   ScheduleRounded as ClockIcon
 } from '@mui/icons-material';
 import { COINBASE_COLORS, COINBASE_TYPOGRAPHY } from '../../constants/coinbaseTokens';
-import { PRESET_COLORS, DAYS_SHORT_TH, DAYS } from '../../constants/colors';
+import { PRESET_COLORS, DAY_SHORT_TH_MAP } from '../../constants/colors';
 
 export default function CourseLibraryBar({
   courses = [],
@@ -248,8 +248,7 @@ export default function CourseLibraryBar({
                     <ClockIcon sx={{ fontSize: 12, color: theme.text, opacity: 0.7 }} />
                     <Typography variant="caption" sx={{ fontSize: '0.7rem', color: theme.text, opacity: 0.85 }}>
                       {group.items.map((item) => {
-                        const dayIdx = DAYS.indexOf(item.day);
-                        const dayTh = DAYS_SHORT_TH[dayIdx] || item.day;
+                        const dayTh = DAY_SHORT_TH_MAP[item.day] || item.day;
                         return `${dayTh} ${item.startTime}-${item.endTime}`;
                       }).join(' | ')}
                     </Typography>

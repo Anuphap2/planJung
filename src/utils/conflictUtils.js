@@ -1,4 +1,4 @@
-import { timeToMinutes } from './timeUtils';
+import { timeToMinutes } from './timeUtils.js';
 
 /**
  * Validates course input fields.

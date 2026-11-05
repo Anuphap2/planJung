@@ -18,7 +18,7 @@ import {
 
 import { theme } from './theme/theme';
 import { COINBASE_COLORS } from './constants/coinbaseTokens';
-import { DAYS } from './constants/colors';
+import { DAYS, DAY_INDEX_MAP } from './constants/colors';
 import { useSchedule } from './hooks/useSchedule';
 import { useScheduleDrag } from './hooks/useScheduleDrag';
 import { encodeScheduleForShare } from './utils/scheduleStorage';
@@ -134,7 +134,7 @@ export default function App() {
   const handleDuplicateCourse = (course) => {
     if (!course) return;
     // Suggest the next available or logical day
-    const currentDayIdx = DAYS.indexOf(course.day);
+    const currentDayIdx = DAY_INDEX_MAP[course.day] ?? 0;
     const nextDayIdx = (currentDayIdx + 2) % DAYS.length; // e.g., Mon -> Wed
     const suggestedDay = DAYS[nextDayIdx] || 'Wednesday';
 
